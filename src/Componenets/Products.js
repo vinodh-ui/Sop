@@ -16,7 +16,7 @@ class Products extends Component {
                   {Product.availableSizes}
                   <h4>Price: {Product.price}</h4>
 
-                  <button>Add cart</button>
+                  <button onClick={()=> this.props.addcart(Product)}>Add cart</button>
                 </div>
               );
             })}
