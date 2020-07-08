@@ -5,6 +5,7 @@ import data from "./data.json";
 import "./App.css";
 import Products from "./Componenets/Products";
 import Filter from "./Componenets/Filter";
+import Cart from "./Componenets/Cart";
 
 class App extends React.Component {
   constructor(props) {
@@ -14,8 +15,44 @@ class App extends React.Component {
       Products: data.products,
       sort: "",
       size: "",
+      cart:[],
     };
   }
+
+
+removecart =(prv) =>{
+const cartItems = this.state.cart
+let cv = cartItems.filter(price => price._id !== prv._id)
+this.setState({
+  cart:cv
+})
+
+}
+
+
+
+addcaart = (product) =>{
+
+  const cartItems = this.state.cart.slice()
+
+  let alreadyExists = false;
+
+  cartItems.forEach((x) => {
+    if (x._id === product._id) {
+      alreadyExists = true;
+      x.countc++;
+    }
+  });
+  if (!alreadyExists) {
+    cartItems.push({ ...product, countc: 1 });
+  }
+this.setState({cart:cartItems})
+
+}
+
+
+
+
 
   Sortproducts = (event) => {
     console.log(event.target.value);
@@ -50,6 +87,7 @@ class App extends React.Component {
       this.setState({
 
         sort: e.target.value,
+      
        Products:data.products.sort((a,b) => a._id > b._id ? 1: -1)
 
       });
@@ -63,7 +101,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="App ">
-        <Filter
+<div style={{float:"left" ,width:"80%"}}>
+
+<Filter
           count={this.state.Products.length}
           size={this.state.size}
           sort={this.state.sort}
@@ -73,10 +113,27 @@ class App extends React.Component {
           {" "}
         </Filter>
 
+
         <Products
           products={this.state.Products}
-          Pr={this.state.Products.length}
+          Pr={this.state.Products.length}   addcart={this.addcaart}
         ></Products>
+
+
+</div >
+
+<div  style={{float:"right" ,width:"20%"}}>
+
+<Cart  Cart={this.state.cart}    removecart={this.removecart} ></Cart>
+
+</div>
+      
+     
+
+
+
+
+
       </div>
     );
   }
