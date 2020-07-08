@@ -11,48 +11,51 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    const local = localStorage.getItem("key")
+      ? JSON.parse(localStorage.getItem("key"))
+      : [];
+
     this.state = {
       Products: data.products,
       sort: "",
       size: "",
-      cart:[],
+      cart: local,
     };
   }
-
-
-removecart =(prv) =>{
-const cartItems = this.state.cart
-let cv = cartItems.filter(price => price._id !== prv._id)
-this.setState({
-  cart:cv
-})
+createorder =(order) =>{
+alert("edeeefe" + order.name)
 
 }
 
 
 
-addcaart = (product) =>{
+  removecart = (prv) => {
+    const cartItems = this.state.cart;
+    let cv = cartItems.filter((price) => price._id !== prv._id);
+    this.setState({
+      cart: cv,
+    });
+    localStorage.setItem("key", JSON.stringify(cv));
+  };
 
-  const cartItems = this.state.cart.slice()
+  addcaart = (product) => {
+    const cartItems = this.state.cart.slice();
 
-  let alreadyExists = false;
+    let alreadyExists = false;
 
-  cartItems.forEach((x) => {
-    if (x._id === product._id) {
-      alreadyExists = true;
-      x.countc++;
+    cartItems.forEach((x) => {
+      if (x._id === product._id) {
+        alreadyExists = true;
+        x.countc++;
+      }
+    });
+    if (!alreadyExists) {
+      cartItems.push({ ...product, countc: 1 });
     }
-  });
-  if (!alreadyExists) {
-    cartItems.push({ ...product, countc: 1 });
-  }
-this.setState({cart:cartItems})
+    this.setState({ cart: cartItems });
 
-}
-
-
-
-
+    localStorage.setItem("key", JSON.stringify(cartItems));
+  };
 
   Sortproducts = (event) => {
     console.log(event.target.value);
@@ -69,8 +72,6 @@ this.setState({cart:cartItems})
     }
   };
 
-
-
   filterproducts = (e) => {
     if (e.target.value === "lowest") {
       this.setState({
@@ -83,57 +84,42 @@ this.setState({cart:cartItems})
         Products: data.products.reverse((a, b) => (b.price > a.price ? 1 : -1)),
       });
     } else if (e.target.value === "latest") {
-
       this.setState({
-
         sort: e.target.value,
-      
-       Products:data.products.sort((a,b) => a._id > b._id ? 1: -1)
 
+        Products: data.products.sort((a, b) => (a._id > b._id ? 1 : -1)),
       });
-
     }
-   
   };
+
+
 
 
 
   render() {
     return (
       <div className="App ">
-<div style={{float:"left" ,width:"80%"}}>
+        <div style={{ float: "left", width: "80%" }}>
+          <Filter
+            count={this.state.Products.length}
+            size={this.state.size}
+            sort={this.state.sort}
+            filterproducts={this.filterproducts}
+            Sortproducts={this.Sortproducts}
+          >
+            {" "}
+          </Filter>
 
-<Filter
-          count={this.state.Products.length}
-          size={this.state.size}
-          sort={this.state.sort}
-          filterproducts={this.filterproducts}
-          Sortproducts={this.Sortproducts}
-        >
-          {" "}
-        </Filter>
+          <Products
+            products={this.state.Products}
+            Pr={this.state.Products.length}
+            addcart={this.addcaart}
+          ></Products>
+        </div>
 
-
-        <Products
-          products={this.state.Products}
-          Pr={this.state.Products.length}   addcart={this.addcaart}
-        ></Products>
-
-
-</div >
-
-<div  style={{float:"right" ,width:"20%"}}>
-
-<Cart  Cart={this.state.cart}    removecart={this.removecart} ></Cart>
-
-</div>
-      
-     
-
-
-
-
-
+        <div style={{ float: "right", width: "20%" }}>
+          <Cart Cart={this.state.cart} removecart={this.removecart}createorder={this.ce}></Cart>
+        </div>
       </div>
     );
   }
